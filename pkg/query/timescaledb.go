@@ -14,6 +14,8 @@ type TimescaleDB struct {
 	Hypertable []byte // e.g. "cpu"
 	SqlQuery   []byte
 	id         uint64
+
+	qi *QueryInfo
 }
 
 // TimescaleDBPool is a sync.Pool of TimescaleDB Query types
@@ -24,6 +26,7 @@ var TimescaleDBPool = sync.Pool{
 			HumanDescription: make([]byte, 0, 1024),
 			Hypertable:       make([]byte, 0, 1024),
 			SqlQuery:         make([]byte, 0, 1024),
+			qi:               nil,
 		}
 	},
 }
@@ -68,4 +71,12 @@ func (q *TimescaleDB) Release() {
 	q.SqlQuery = q.SqlQuery[:0]
 
 	TimescaleDBPool.Put(q)
+}
+
+func (q *TimescaleDB) SetQueryInfo(qi *QueryInfo) {
+	q.qi = qi
+}
+
+func (q *TimescaleDB) GetQueryInfo() *QueryInfo {
+	return q.qi
 }

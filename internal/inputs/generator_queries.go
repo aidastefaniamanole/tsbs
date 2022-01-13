@@ -2,12 +2,12 @@ package inputs
 
 import (
 	"bufio"
-	"encoding/gob"
 	"fmt"
 	"io"
 	"math/rand"
 	"os"
 	"sort"
+	"strconv"
 	"time"
 
 	queryUtils "github.com/timescale/tsbs/cmd/tsbs_generate_queries/utils"
@@ -204,7 +204,7 @@ func (g *QueryGenerator) getUseCaseGenerator(c *config.QueryGeneratorConfig) (qu
 func (g *QueryGenerator) runQueryGeneration(useGen queryUtils.QueryGenerator, filler queryUtils.QueryFiller, c *config.QueryGeneratorConfig) error {
 	stats := make(map[string]int64)
 	currentGroup := uint(0)
-	enc := gob.NewEncoder(g.bufOut)
+	// enc := gob.NewEncoder(g.bufOut)
 	defer g.bufOut.Flush()
 
 	rand.Seed(g.conf.Seed)
@@ -216,15 +216,21 @@ func (g *QueryGenerator) runQueryGeneration(useGen queryUtils.QueryGenerator, fi
 		}
 	}
 
+	// write the query data in a CSV format
+	g.bufOut.WriteString("startime, endtime, step, query\n")
 	for i := 0; i < int(c.Limit); i++ {
 		q := useGen.GenerateEmptyQuery()
 		q = filler.Fill(q)
 
 		if currentGroup == c.InterleavedGroupID {
-			err := enc.Encode(q)
-			if err != nil {
-				return fmt.Errorf(errCouldNotEncodeQueryFmt, err)
-			}
+			qi := q.GetQueryInfo()
+			g.bufOut.WriteString(strconv.FormatInt(qi.Interval.StartUnixNano()/1e9, 10) + ", " +
+				strconv.FormatInt(qi.Interval.EndUnixNano()/1e9, 10) + ", " +
+				qi.Step + ", " + qi.Query + "\n")
+			// err := enc.Encode(q)
+			// if err != nil {
+			// 	return fmt.Errorf(errCouldNotEncodeQueryFmt, err)
+			// }
 			stats[string(q.HumanLabelName())]++
 
 			if c.Debug > 0 {
@@ -237,7 +243,7 @@ func (g *QueryGenerator) runQueryGeneration(useGen queryUtils.QueryGenerator, fi
 					debugMsg = q.String()
 				}
 
-				_, err = fmt.Fprintf(g.DebugOut, debugMsg+"\n")
+				_, err := fmt.Fprintf(g.DebugOut, debugMsg+"\n")
 				if err != nil {
 					return fmt.Errorf(errCouldNotDebugFmt, err)
 				}

@@ -24,6 +24,8 @@ type Cassandra struct {
 	OrderBy         []byte // e.g. "timestamp_ns DESC"
 	Limit           int
 	TagSets         [][]string // semantically, each subgroup is OR'ed and they are all AND'ed together
+
+	qi *QueryInfo
 }
 
 //CassandraPool is a sync.Pool of Cassandra Query types
@@ -39,6 +41,7 @@ var CassandraPool = sync.Pool{
 			WhereClause:      []byte{},
 			OrderBy:          []byte{},
 			TagSets:          [][]string{},
+			qi:               nil,
 		}
 	},
 }
@@ -92,4 +95,12 @@ func (q *Cassandra) Release() {
 	q.TagSets = q.TagSets[:0]
 
 	CassandraPool.Put(q)
+}
+
+func (q *Cassandra) SetQueryInfo(qi *QueryInfo) {
+	q.qi = qi
+}
+
+func (q *Cassandra) GetQueryInfo() *QueryInfo {
+	return q.qi
 }

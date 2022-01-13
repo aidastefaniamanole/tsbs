@@ -17,6 +17,8 @@ type HTTP struct {
 	StartTimestamp   int64
 	EndTimestamp     int64
 	id               uint64
+
+	qi *QueryInfo
 }
 
 // HTTPPool is a sync.Pool of HTTP Query types
@@ -31,6 +33,7 @@ var HTTPPool = sync.Pool{
 			RawQuery:         []byte{},
 			StartTimestamp:   0,
 			EndTimestamp:     0,
+			qi:               nil,
 		}
 	},
 }
@@ -77,4 +80,12 @@ func (q *HTTP) Release() {
 	q.EndTimestamp = 0
 
 	HTTPPool.Put(q)
+}
+
+func (q *HTTP) SetQueryInfo(qi *QueryInfo) {
+	q.qi = qi
+}
+
+func (q *HTTP) GetQueryInfo() *QueryInfo {
+	return q.qi
 }

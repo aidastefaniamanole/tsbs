@@ -14,6 +14,8 @@ type CrateDB struct {
 	Table    []byte // e.g. "cpu"
 	SqlQuery []byte
 	id       uint64
+
+	qi *QueryInfo
 }
 
 var CrateDBPool = sync.Pool{
@@ -23,6 +25,7 @@ var CrateDBPool = sync.Pool{
 			HumanDescription: make([]byte, 0, 1024),
 			Table:            make([]byte, 0, 1024),
 			SqlQuery:         make([]byte, 0, 1024),
+			qi:               nil,
 		}
 	},
 }
@@ -63,4 +66,12 @@ func (q *CrateDB) Release() {
 	q.SqlQuery = q.SqlQuery[:0]
 
 	CrateDBPool.Put(q)
+}
+
+func (q *CrateDB) SetQueryInfo(qi *QueryInfo) {
+	q.qi = qi
+}
+
+func (q *CrateDB) GetQueryInfo() *QueryInfo {
+	return q.qi
 }

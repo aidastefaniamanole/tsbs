@@ -10,6 +10,8 @@ type SiriDB struct {
 	HumanDescription []byte
 	SqlQuery         []byte
 	id               uint64
+
+	qi *QueryInfo
 }
 
 var SiriDBPool = sync.Pool{
@@ -18,6 +20,7 @@ var SiriDBPool = sync.Pool{
 			HumanLabel:       make([]byte, 0, 1024),
 			HumanDescription: make([]byte, 0, 1024),
 			SqlQuery:         make([]byte, 0, 1024),
+			qi:               nil,
 		}
 	},
 }
@@ -59,4 +62,12 @@ func (q *SiriDB) Release() {
 	q.SqlQuery = q.SqlQuery[:0]
 
 	SiriDBPool.Put(q)
+}
+
+func (q *SiriDB) SetQueryInfo(qi *QueryInfo) {
+	q.qi = qi
+}
+
+func (q *SiriDB) GetQueryInfo() *QueryInfo {
+	return q.qi
 }

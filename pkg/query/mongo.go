@@ -15,6 +15,8 @@ type Mongo struct {
 	CollectionName   []byte
 	BsonDoc          []bson.M
 	id               uint64
+
+	qi *QueryInfo
 }
 
 // MongoPool is a sync.Pool of Mongo Query types
@@ -25,6 +27,7 @@ var MongoPool = sync.Pool{
 			HumanDescription: []byte{},
 			CollectionName:   []byte{},
 			BsonDoc:          []bson.M{},
+			qi:               nil,
 		}
 	},
 }
@@ -68,4 +71,12 @@ func (q *Mongo) Release() {
 	q.BsonDoc = nil
 
 	MongoPool.Put(q)
+}
+
+func (q *Mongo) SetQueryInfo(qi *QueryInfo) {
+	q.qi = qi
+}
+
+func (q *Mongo) GetQueryInfo() *QueryInfo {
+	return q.qi
 }

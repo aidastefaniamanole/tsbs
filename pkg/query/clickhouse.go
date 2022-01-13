@@ -14,6 +14,8 @@ type ClickHouse struct {
 	Table    []byte // e.g. "cpu"
 	SqlQuery []byte
 	id       uint64
+
+	qi *QueryInfo
 }
 
 // ClickHousePool is a sync.Pool of ClickHouse Query types
@@ -24,6 +26,7 @@ var ClickHousePool = sync.Pool{
 			HumanDescription: make([]byte, 0, 1024),
 			Table:            make([]byte, 0, 1024),
 			SqlQuery:         make([]byte, 0, 1024),
+			qi:               nil,
 		}
 	},
 }
@@ -67,4 +70,12 @@ func (ch *ClickHouse) Release() {
 	ch.SqlQuery = ch.SqlQuery[:0]
 
 	ClickHousePool.Put(ch)
+}
+
+func (ch *ClickHouse) SetQueryInfo(qi *QueryInfo) {
+	ch.qi = qi
+}
+
+func (ch *ClickHouse) GetQueryInfo() *QueryInfo {
+	return ch.qi
 }

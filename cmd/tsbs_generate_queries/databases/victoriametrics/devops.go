@@ -49,11 +49,11 @@ func (d *Devops) GroupByTime(qq query.Query, nHosts, numMetrics int, timeRange t
 	metrics := mustGetCPUMetricsSlice(numMetrics)
 	hosts := d.mustGetRandomHosts(nHosts)
 	selectClause := getSelectClause(metrics, hosts)
-	qi := &queryInfo{
-		query:    fmt.Sprintf("max(max_over_time(%s[1m])) by (__name__)", selectClause),
-		label:    fmt.Sprintf("VictoriaMetrics %d cpu metric(s), random %4d hosts, random %s by 1m", numMetrics, nHosts, timeRange),
-		interval: d.Interval.MustRandWindow(timeRange),
-		step:     "60",
+	qi := &query.QueryInfo{
+		Query:    fmt.Sprintf("max(max_over_time(%s[1m])) by (__name__)", selectClause),
+		Label:    fmt.Sprintf("VictoriaMetrics %d cpu metric(s), random %4d hosts, random %s by 1m", numMetrics, nHosts, timeRange),
+		Interval: d.Interval.MustRandWindow(timeRange),
+		Step:     "60",
 	}
 	d.fillInQuery(qq, qi)
 }
@@ -74,11 +74,11 @@ func (d *Devops) GroupByTime(qq query.Query, nHosts, numMetrics int, timeRange t
 func (d *Devops) GroupByTimeAndPrimaryTag(qq query.Query, numMetrics int) {
 	metrics := mustGetCPUMetricsSlice(numMetrics)
 	selectClause := getSelectClause(metrics, nil)
-	qi := &queryInfo{
-		query:    fmt.Sprintf("avg(avg_over_time(%s[1h])) by (__name__, hostname)", selectClause),
-		label:    devops.GetDoubleGroupByLabel("VictoriaMetrics", numMetrics),
-		interval: d.Interval.MustRandWindow(devops.DoubleGroupByDuration),
-		step:     "3600",
+	qi := &query.QueryInfo{
+		Query:    fmt.Sprintf("avg(avg_over_time(%s[1h])) by (__name__, hostname)", selectClause),
+		Label:    devops.GetDoubleGroupByLabel("VictoriaMetrics", numMetrics),
+		Interval: d.Interval.MustRandWindow(devops.DoubleGroupByDuration),
+		Step:     "3600",
 	}
 	d.fillInQuery(qq, qi)
 }
@@ -94,11 +94,11 @@ func (d *Devops) GroupByTimeAndPrimaryTag(qq query.Query, numMetrics int) {
 func (d *Devops) MaxAllCPU(qq query.Query, nHosts int) {
 	hosts := d.mustGetRandomHosts(nHosts)
 	selectClause := getSelectClause(devops.GetAllCPUMetrics(), hosts)
-	qi := &queryInfo{
-		query:    fmt.Sprintf("max(max_over_time(%s[1h])) by (__name__)", selectClause),
-		label:    devops.GetMaxAllLabel("VictoriaMetrics", nHosts),
-		interval: d.Interval.MustRandWindow(devops.MaxAllDuration),
-		step:     "3600",
+	qi := &query.QueryInfo{
+		Query:    fmt.Sprintf("max(max_over_time(%s[1h])) by (__name__)", selectClause),
+		Label:    devops.GetMaxAllLabel("VictoriaMetrics", nHosts),
+		Interval: d.Interval.MustRandWindow(devops.MaxAllDuration),
+		Step:     "3600",
 	}
 	d.fillInQuery(qq, qi)
 }

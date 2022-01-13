@@ -45,19 +45,21 @@ type queryInfo struct {
 }
 
 // fill Query fills the query struct with data
-func (g *BaseGenerator) fillInQuery(qq query.Query, qi *queryInfo) {
+func (g *BaseGenerator) fillInQuery(qq query.Query, qi *query.QueryInfo) {
 	q := qq.(*query.HTTP)
-	q.HumanLabel = []byte(qi.label)
-	if qi.interval != nil {
-		q.HumanDescription = []byte(fmt.Sprintf("%s: %s", qi.label, qi.interval.StartString()))
+	q.HumanLabel = []byte(qi.Label)
+	if qi.Interval != nil {
+		q.HumanDescription = []byte(fmt.Sprintf("%s: %s", qi.Label, qi.Interval.StartString()))
 	}
 	q.Method = []byte("GET")
 
 	v := url.Values{}
-	v.Set("query", qi.query)
-	v.Set("start", strconv.FormatInt(qi.interval.StartUnixNano()/1e9, 10))
-	v.Set("end", strconv.FormatInt(qi.interval.EndUnixNano()/1e9, 10))
-	v.Set("step", qi.step)
+	v.Set("query", qi.Query)
+	v.Set("start", strconv.FormatInt(qi.Interval.StartUnixNano()/1e9, 10))
+	v.Set("end", strconv.FormatInt(qi.Interval.EndUnixNano()/1e9, 10))
+	v.Set("step", qi.Step)
 	q.Path = []byte(fmt.Sprintf("/api/v1/query_range?%s", v.Encode()))
 	q.Body = nil
+
+	q.SetQueryInfo(qi)
 }

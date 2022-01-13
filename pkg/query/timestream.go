@@ -14,6 +14,8 @@ type Timestream struct {
 	Table    []byte // e.g. "cpu"
 	SqlQuery []byte
 	id       uint64
+
+	qi *QueryInfo
 }
 
 // TimestreamPool is a sync.Pool of Timestream Query types
@@ -24,6 +26,7 @@ var TimestreamPool = sync.Pool{
 			HumanDescription: make([]byte, 0, 1024),
 			Table:            make([]byte, 0, 50),
 			SqlQuery:         make([]byte, 0, 1024),
+			qi:               nil,
 		}
 	},
 }
@@ -70,4 +73,12 @@ func (q *Timestream) Release() {
 	q.SqlQuery = q.SqlQuery[:0]
 
 	TimestreamPool.Put(q)
+}
+
+func (q *Timestream) SetQueryInfo(qi *QueryInfo) {
+	q.qi = qi
+}
+
+func (q *Timestream) GetQueryInfo() *QueryInfo {
+	return q.qi
 }
