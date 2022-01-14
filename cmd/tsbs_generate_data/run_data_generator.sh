@@ -4,9 +4,10 @@ OUTPUT_DIR="/home/stefania/IdeaProjects/vm-benchmarking-client/src/main/resource
 
 # configurable variables
 USE_CASE="devops"
-SCALE=${SCALE:-"100"}
-TIMESTAMP_START=${TIMESTAMP_START:-"2022-01-07T00:00:00Z"}
-TIMESTAMP_END=${TIMESTAMP_END:-"2022-01-08T00:00:00Z"}
+SCALE=${SCALE:-"2"}
+TIMESTAMP_START=$(date +"%Y-%m-%dT%H:%M:%S%:z" -d "24 hour ago")
+TIMESTAMP_END=$(date +"%Y-%m-%dT%H:%M:%S%:z")
+# TIMESTAMP_END=${TIMESTAMP_END:-"2022-01-07T00:01:00Z"}
 LOG_INTERVAL=${LOG_INTERVAL:-"10s"}
 DIFF=$(( $(date +%s -d ${TIMESTAMP_END})-$(date +%s -d ${TIMESTAMP_START}) ))
 EXPERIMENT_HOURS=$(( $DIFF / (60 * 60) )) # to get the number of hours the data spans over

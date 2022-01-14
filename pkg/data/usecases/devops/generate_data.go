@@ -1,9 +1,10 @@
 package devops
 
 import (
+	"time"
+
 	"github.com/timescale/tsbs/pkg/data"
 	"github.com/timescale/tsbs/pkg/data/usecases/common"
-	"time"
 )
 
 // DevopsSimulator generates data similar to telemetry, with metrics from a variety of device systems.
@@ -11,23 +12,50 @@ import (
 type DevopsSimulator struct {
 	*commonDevopsSimulator
 	simulatedMeasurementIndex int
+	firstMeasurement          bool
 }
 
 // Next advances a Point to the next state in the generator.
+// func (d *DevopsSimulator) Next(p *data.Point) bool {
+// 	// switch to the next metric if needed
+// 	if d.hostIndex == uint64(len(d.hosts)) {
+// 		d.hostIndex = 0
+// 		d.simulatedMeasurementIndex++
+// 	}
+
+// 	if d.simulatedMeasurementIndex == len(d.hosts[0].SimulatedMeasurements) {
+// 		d.simulatedMeasurementIndex = 0
+
+// 		for i := 0; i < len(d.hosts); i++ {
+// 			d.hosts[i].TickAll(d.interval)
+// 		}
+
+// 		d.adjustNumHostsForEpoch()
+// 	}
+
+// 	return d.populatePoint(p, d.simulatedMeasurementIndex)
+// }
+
+// Next advances a Point to the next state in the generator.
 func (d *DevopsSimulator) Next(p *data.Point) bool {
-	// switch to the next metric if needed
-	if d.hostIndex == uint64(len(d.hosts)) {
-		d.hostIndex = 0
-		d.simulatedMeasurementIndex++
+	// when all the measurements for a certain host have been generated the
+	// simulator needs to adjust the clock for this host and move on to the next one
+	if d.simulatedMeasurementIndex == len(d.hosts[0].SimulatedMeasurements)-1 {
+		d.hosts[d.hostIndex].TickAll(d.interval)
+		d.hostIndex++
+		d.simulatedMeasurementIndex = 0
+	} else {
+		// generate the new measurement for the current host
+		if d.firstMeasurement {
+			d.firstMeasurement = false
+		} else {
+			d.simulatedMeasurementIndex++
+		}
 	}
 
-	if d.simulatedMeasurementIndex == len(d.hosts[0].SimulatedMeasurements) {
-		d.simulatedMeasurementIndex = 0
-
-		for i := 0; i < len(d.hosts); i++ {
-			d.hosts[i].TickAll(d.interval)
-		}
-
+	// if we have iterated through all the hosts, move on to the new epoch
+	if d.hostIndex == uint64(len(d.hosts)) {
+		d.hostIndex = 0
 		d.adjustNumHostsForEpoch()
 	}
 
@@ -91,6 +119,7 @@ func (d *DevopsSimulatorConfig) NewSimulator(interval time.Duration, limit uint6
 			interval:       interval,
 		},
 		simulatedMeasurementIndex: 0,
+		firstMeasurement:          true,
 	}
 
 	return dg

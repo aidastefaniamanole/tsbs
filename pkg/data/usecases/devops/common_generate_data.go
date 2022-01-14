@@ -1,9 +1,10 @@
 package devops
 
 import (
+	"time"
+
 	"github.com/timescale/tsbs/pkg/data"
 	"github.com/timescale/tsbs/pkg/data/usecases/common"
-	"time"
 )
 
 // HostContext contains information needed to create a new host
@@ -130,7 +131,7 @@ func (s *commonDevopsSimulator) populatePoint(p *data.Point, measureIdx int) boo
 
 	ret := s.hostIndex < s.epochHosts
 	s.madePoints++
-	s.hostIndex++
+	// s.hostIndex++
 	return ret
 }
 
