@@ -1,6 +1,7 @@
 package devops
 
 import (
+	"math/rand"
 	"time"
 
 	"github.com/timescale/tsbs/pkg/data"
@@ -92,8 +93,12 @@ type DevopsSimulatorConfig commonDevopsSimulatorConfig
 // NewSimulator produces a Simulator that conforms to the given SimulatorConfig over the specified interval
 func (d *DevopsSimulatorConfig) NewSimulator(interval time.Duration, limit uint64) common.Simulator {
 	hostInfos := make([]Host, d.HostCount)
+	rand.Seed(time.Now().UnixNano())
 	for i := 0; i < len(hostInfos); i++ {
-		hostInfos[i] = d.HostConstructor(NewHostCtx(i, d.Start))
+		// each host should start sending measurement data at different times
+		// since we cannot assume that they are all perfectly in sync
+		offset := rand.Intn(int(interval.Seconds()))
+		hostInfos[i] = d.HostConstructor(NewHostCtx(i, d.Start.Add(time.Duration(offset*1000000000))))
 	}
 
 	epochs := calculateEpochs(commonDevopsSimulatorConfig(*d), interval)
