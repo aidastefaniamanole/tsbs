@@ -219,14 +219,21 @@ func (g *QueryGenerator) runQueryGeneration(useGen queryUtils.QueryGenerator, fi
 	// write the query data in a CSV format
 	g.bufOut.WriteString("startime, endtime, step, query\n")
 	for i := 0; i < int(c.Limit); i++ {
+
 		q := useGen.GenerateEmptyQuery()
 		q = filler.Fill(q)
 
 		if currentGroup == c.InterleavedGroupID {
 			qi := q.GetQueryInfo()
+			// Print the query for all measurements (cpu, disk, diskio, etc.)
 			g.bufOut.WriteString(strconv.FormatInt(qi.Interval.StartUnixNano()/1e9, 10) + ", " +
 				strconv.FormatInt(qi.Interval.EndUnixNano()/1e9, 10) + ", " +
 				qi.Step + ", " + qi.Query + "\n")
+			for i := 0; i < len(qi.Queries); i++ {
+				g.bufOut.WriteString(strconv.FormatInt(qi.Interval.StartUnixNano()/1e9, 10) + ", " +
+					strconv.FormatInt(qi.Interval.EndUnixNano()/1e9, 10) + ", " +
+					qi.Step + ", " + qi.Queries[i] + "\n")
+			}
 			// err := enc.Encode(q)
 			// if err != nil {
 			// 	return fmt.Errorf(errCouldNotEncodeQueryFmt, err)

@@ -8,6 +8,8 @@ import (
 
 // TODO: remove ugly hack
 type QueryInfo struct {
+	// prometheus array of queries when we want to use more than CPU related metrics
+	Queries []string
 	// prometheus query
 	Query string
 	// label to describe type of query
@@ -18,6 +20,8 @@ type QueryInfo struct {
 	Interval *iutils.TimeInterval
 	// time period to group by in seconds
 	Step string
+	// metric to be used in the query
+	Metric string
 }
 
 // Query is an interface used for encoding a benchmark query for different databases

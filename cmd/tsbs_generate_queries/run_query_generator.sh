@@ -19,26 +19,28 @@ single-groupby-5-8-1"
 QUERY_TYPES=${QUERY:-${QUERY_TYPES_ALL}}
 
 # Number of hosts to generate data about
-SCALE=${SCALE:-"100"}
+SCALE=${SCALE:-"8"}
 
 # Number of queries to generate
-QUERIES=${QUERIES:-"1000"}
+QUERIES=${QUERIES:-"100"}
 
-echo -e "Use case: ${USE_CASE}
-Number of hosts that emit queries about: ${SCALE}
-Timestamp start: ${TIMESTAMP_START}
-Timestamp end: ${TIMESTAMP_END}
-Queries span over: ${EXPERIMENT_HOURS}h" >> "${OUTPUT_DIR}/${QUERY_TYPE}_${SCALE}_hosts.csv"
+TIMESTAMP_START="2022-01-17T23:46:31+01:00"
+TIMESTAMP_END="2022-01-18T23:46:31+01:00"
 
 echo "Started query generation"
 for QUERY_TYPE in ${QUERY_TYPES}; do
+    echo -e "Use case: ${USE_CASE}
+    Number of hosts that emit queries about: ${SCALE}
+    Timestamp start: ${TIMESTAMP_START}
+    Timestamp end: ${TIMESTAMP_END}
+    Queries span over: ${EXPERIMENT_HOURS}h" >> "${OUTPUT_DIR}/${QUERY_TYPE}_${SCALE}_hosts.csv"
     echo "Generating ${QUERIES} of type ${QUERY_TYPE} for ${SCALE} hosts"
     echo 
     go run main.go --format "victoriametrics"  \
         --use-case "cpu-only" \
         --scale ${SCALE} \
-        --timestamp-start "2022-01-06T00:00:00Z" \
-        --timestamp-end "2022-01-07T00:00:00Z" \
+        --timestamp-start ${TIMESTAMP_START} \
+        --timestamp-end ${TIMESTAMP_END} \
         --queries ${QUERIES} \
         --query-type ${QUERY_TYPE} >> "${OUTPUT_DIR}/${QUERY_TYPE}_${SCALE}_hosts.csv"
 done

@@ -28,6 +28,7 @@ func (g *BaseGenerator) NewDevops(start, end time.Time, scale int) (utils.QueryG
 	return &Devops{
 		BaseGenerator: g,
 		Core:          core,
+		Metrics:       []string{"disk", "diskio", "kernel", "mem", "net", "nginx", "postgresql", "redis"},
 	}, nil
 }
 

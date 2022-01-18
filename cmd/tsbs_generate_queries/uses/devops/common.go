@@ -80,6 +80,16 @@ func GetCPUMetricsSlice(numMetrics int) ([]string, error) {
 	return cpuMetrics[:numMetrics], nil
 }
 
+func GetMetricsSlice(numMetrics int, metrics []string) ([]string, error) {
+	if numMetrics <= 0 {
+		return nil, fmt.Errorf(errNoMetrics)
+	}
+	if numMetrics > len(metrics) {
+		return nil, fmt.Errorf(errTooManyMetrics)
+	}
+	return metrics[:numMetrics], nil
+}
+
 // GetAllCPUMetrics returns all the metrics for CPU
 func GetAllCPUMetrics() []string {
 	return cpuMetrics
@@ -88,6 +98,207 @@ func GetAllCPUMetrics() []string {
 // GetCPUMetricsLen returns the number of metrics in CPU
 func GetCPUMetricsLen() int {
 	return len(cpuMetrics)
+}
+
+var diskMetrics = []string{
+	"total",
+	"free",
+	"used",
+	"used_percent",
+	"inodes_total",
+	"inodes_free",
+	"inodes_used",
+}
+
+func GetAllDiskMetrics() []string {
+	return diskMetrics
+}
+
+func GetDiskMetricsLen() int {
+	return len(diskMetrics)
+}
+
+var diskioMetrics = []string{
+	"reads",
+	"writes",
+	"read_bytes",
+	"write_bytes",
+	"read_time",
+	"write_time",
+	"io_time",
+}
+
+func GetAllDiskioMetrics() []string {
+	return diskioMetrics
+}
+
+func GetDiskioMetricsLen() int {
+	return len(diskioMetrics)
+}
+
+var kernelMetrics = []string{
+	"interrupts",
+	"context_switches",
+	"processes_forked",
+	"disk_pages_in",
+	"disk_pages_out",
+}
+
+func GetAllKernelMetrics() []string {
+	return kernelMetrics
+}
+
+func GetKernelMetricsLen() int {
+	return len(kernelMetrics)
+}
+
+var memMetrics = []string{
+	"total",
+	"available",
+	"used",
+	"free",
+	"cached",
+	"buffered",
+	"used_percent",
+	"available_percent",
+	"buffered_percent",
+}
+
+func GetAllMemMetrics() []string {
+	return memMetrics
+}
+
+func GetMemMetricsLen() int {
+	return len(memMetrics)
+}
+
+var netMetrics = []string{
+	"bytes_sent",
+	"bytes_recv",
+	"packets_sent",
+	"packets_recv",
+	"err_in",
+	"err_out",
+	"drop_in",
+	"drop_out",
+}
+
+func GetAllNetMetrics() []string {
+	return netMetrics
+}
+
+func GetNetMetricsLen() int {
+	return len(netMetrics)
+}
+
+var nginxMetrics = []string{
+	"accepts",
+	"active",
+	"handled",
+	"reading",
+	"requests",
+	"waiting",
+	"writing",
+}
+
+func GetAllNginxMetrics() []string {
+	return nginxMetrics
+}
+
+func GetNginxMetricsLen() int {
+	return len(nginxMetrics)
+}
+
+var postgresqlMetrics = []string{
+	"numbackends",
+	"xact_commit",
+	"xact_rollback",
+	"blks_read",
+	"blks_hit",
+	"tup_returned",
+	"tup_fetched",
+	"tup_inserted",
+	"tup_updated",
+	"tup_deleted",
+	"conflicts",
+	"temp_files",
+	"temp_bytes",
+	"deadlocks",
+	"blk_read_time",
+	"blk_write_time",
+}
+
+func GetAllPostgresqlMetrics() []string {
+	return postgresqlMetrics
+}
+
+func GetPostgresqlMetricsLen() int {
+	return len(postgresqlMetrics)
+}
+
+var redisMetrics = []string{
+	"total_connections_received",
+	"expired_keys",
+	"evicted_keys",
+	"keyspace_hits",
+	"keyspace_misses",
+	"instantaneous_ops_per_sec",
+	"instantaneous_input_kbps",
+	"instantaneous_output_kbps",
+	"connected_clients",
+	"used_memory",
+	"used_memory_rss",
+	"used_memory_peak",
+	"used_memory_lua",
+	"rdb_changes_since_last_save",
+	"sync_full",
+	"sync_partial_ok",
+	"sync_partial_err",
+	"pubsub_channels",
+	"pubsub_patterns",
+	"latest_fork_usec",
+	"connected_slaves",
+	"master_repl_offset",
+	"repl_backlog_active",
+	"repl_backlog_size",
+	"repl_backlog_histlen",
+	"mem_fragmentation_ratio",
+	"used_cpu_sys",
+	"used_cpu_user",
+	"used_cpu_sys_children",
+	"used_cpu_user_children",
+}
+
+func GetAllRedisMetrics() []string {
+	return redisMetrics
+}
+
+func GetRedisMetricsLen() int {
+	return len(redisMetrics)
+}
+
+func GetMetrics(metric string) []string {
+	switch metric {
+	case "disk":
+		return diskMetrics
+	case "diskio":
+		return diskioMetrics
+	case "kernel":
+		return netMetrics
+	case "mem":
+		return memMetrics
+	case "net":
+		return netMetrics
+	case "nginx":
+		return nginxMetrics
+	case "postgresql":
+		return postgresqlMetrics
+	case "redis":
+		return redisMetrics
+	default:
+		fmt.Printf("Return the CPU related metrics")
+	}
+	return cpuMetrics
 }
 
 // SingleGroupbyFiller is a type that can fill in a single groupby query
