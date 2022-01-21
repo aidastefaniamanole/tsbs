@@ -16,24 +16,27 @@ single-groupby-5-1-1 \
 single-groupby-5-1-12 \
 single-groupby-5-8-1"
 
+QUERY="single-groupby-5-8-1"
 QUERY_TYPES=${QUERY:-${QUERY_TYPES_ALL}}
 
 # Number of hosts to generate data about
 SCALE=${SCALE:-"8"}
 
 # Number of queries to generate
-QUERIES=${QUERIES:-"100"}
+QUERIES=${QUERIES:-"1000"}
 
-TIMESTAMP_START="2022-01-17T23:46:31+01:00"
-TIMESTAMP_END="2022-01-18T23:46:31+01:00"
+TIMESTAMP_START="2022-01-18T19:48:41Z"
+TIMESTAMP_END="2022-01-20T19:48:41Z"
+DIFF=$(( $(date +%s -d ${TIMESTAMP_END})-$(date +%s -d ${TIMESTAMP_START}) ))
+EXPERIMENT_DAYS=$(( $DIFF / (60 * 60 * 24) )) # to get the number of days the data spans over
 
 echo "Started query generation"
 for QUERY_TYPE in ${QUERY_TYPES}; do
-    echo -e "Use case: ${USE_CASE}
-    Number of hosts that emit queries about: ${SCALE}
-    Timestamp start: ${TIMESTAMP_START}
-    Timestamp end: ${TIMESTAMP_END}
-    Queries span over: ${EXPERIMENT_HOURS}h" >> "${OUTPUT_DIR}/${QUERY_TYPE}_${SCALE}_hosts.csv"
+    echo -e "Number of hosts to emit queries about=${SCALE}
+Number of queries=${QUERIES}
+Timestamp start=${TIMESTAMP_START}
+Timestamp end=${TIMESTAMP_END}
+Queries span in days=${EXPERIMENT_DAYS}" >> "${OUTPUT_DIR}/${QUERY_TYPE}_${SCALE}_hosts.csv"
     echo "Generating ${QUERIES} of type ${QUERY_TYPE} for ${SCALE} hosts"
     echo 
     go run main.go --format "victoriametrics"  \

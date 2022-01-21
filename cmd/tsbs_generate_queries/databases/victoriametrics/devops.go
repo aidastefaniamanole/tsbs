@@ -53,17 +53,17 @@ func (d *Devops) GroupByTime(qq query.Query, nHosts, numMetrics int, timeRange t
 	selectClause := getSelectClause(metrics, hosts, "cpu")
 
 	qi := &query.QueryInfo{
-		Query:    fmt.Sprintf("max(max_over_time(%s[1m])) by (__name__)", selectClause),
-		Label:    fmt.Sprintf("VictoriaMetrics %d cpu metric(s), random %4d hosts, random %s by 1m", numMetrics, nHosts, timeRange),
+		Query:    fmt.Sprintf("max(max_over_time(%s[5m])) by (__name__)", selectClause),
+		Label:    fmt.Sprintf("VictoriaMetrics %d cpu metric(s), random %4d hosts, random %s by 5m", numMetrics, nHosts, timeRange),
 		Interval: d.Interval.MustRandWindow(timeRange),
-		Step:     "60",
+		Step:     "300", // 5 min
 	}
 
 	queries := make([]string, len(d.Metrics))
 	for i := 0; i < len(d.Metrics); i++ {
 		metrics = mustGetMetricsSlice(numMetrics, devops.GetMetrics(d.Metrics[i]))
 		selectClause = getSelectClause(metrics, hosts, d.Metrics[i])
-		queries[i] = fmt.Sprintf("max(max_over_time(%s[1m])) by (__name__)", selectClause)
+		queries[i] = fmt.Sprintf("max(max_over_time(%s[5m])) by (__name__)", selectClause)
 	}
 
 	qi.Queries = queries
@@ -129,7 +129,7 @@ func (d *Devops) MaxAllCPU(qq query.Query, nHosts int) {
 
 	queries := make([]string, len(d.Metrics))
 	for i := 0; i < len(d.Metrics); i++ {
-		selectClause = getSelectClause(devops.GetMetrics(d.Metrics[i]), nil, d.Metrics[i])
+		selectClause = getSelectClause(devops.GetMetrics(d.Metrics[i]), hosts, d.Metrics[i])
 		queries[i] = fmt.Sprintf("max(max_over_time(%s[1h])) by (__name__)", selectClause)
 	}
 

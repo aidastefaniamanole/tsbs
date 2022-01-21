@@ -7,7 +7,6 @@ import (
 	"math/rand"
 	"os"
 	"sort"
-	"strconv"
 	"time"
 
 	queryUtils "github.com/timescale/tsbs/cmd/tsbs_generate_queries/utils"
@@ -217,7 +216,7 @@ func (g *QueryGenerator) runQueryGeneration(useGen queryUtils.QueryGenerator, fi
 	}
 
 	// write the query data in a CSV format
-	g.bufOut.WriteString("startime, endtime, step, query\n")
+	g.bufOut.WriteString("step, query_cpu, query_disk, query_diskio, query_kernel, query_mem, query_net, query_nginx, query_postgresql, query_redis\n")
 	for i := 0; i < int(c.Limit); i++ {
 
 		q := useGen.GenerateEmptyQuery()
@@ -226,14 +225,14 @@ func (g *QueryGenerator) runQueryGeneration(useGen queryUtils.QueryGenerator, fi
 		if currentGroup == c.InterleavedGroupID {
 			qi := q.GetQueryInfo()
 			// Print the query for all measurements (cpu, disk, diskio, etc.)
-			g.bufOut.WriteString(strconv.FormatInt(qi.Interval.StartUnixNano()/1e9, 10) + ", " +
-				strconv.FormatInt(qi.Interval.EndUnixNano()/1e9, 10) + ", " +
-				qi.Step + ", " + qi.Query + "\n")
+			//g.bufOut.WriteString(strconv.FormatInt(qi.Interval.StartUnixNano()/1e9, 10) + ", " +
+			//	strconv.FormatInt(qi.Interval.EndUnixNano()/1e9, 10) + ", " +
+			//	qi.Step + ", " + qi.Query + "\n")
+			csvRow := qi.Step + ", \"" + qi.Query + "\""
 			for i := 0; i < len(qi.Queries); i++ {
-				g.bufOut.WriteString(strconv.FormatInt(qi.Interval.StartUnixNano()/1e9, 10) + ", " +
-					strconv.FormatInt(qi.Interval.EndUnixNano()/1e9, 10) + ", " +
-					qi.Step + ", " + qi.Queries[i] + "\n")
+				csvRow += ", \"" + qi.Queries[i] + "\""
 			}
+			g.bufOut.WriteString(csvRow + "\n")
 			// err := enc.Encode(q)
 			// if err != nil {
 			// 	return fmt.Errorf(errCouldNotEncodeQueryFmt, err)
