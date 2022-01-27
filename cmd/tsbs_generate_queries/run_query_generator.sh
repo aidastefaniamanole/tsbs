@@ -1,6 +1,6 @@
 #!/bin/bash
 
-OUTPUT_DIR="/home/stefania/IdeaProjects/vm-benchmarking-client/src/main/resources"
+OUTPUT_DIR="../../../."
 
 # All available for generation query types (sorted alphabetically)
 QUERY_TYPES_ALL="\

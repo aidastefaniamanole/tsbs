@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # configurable variables
-OUTPUT_DIR="/home/stefania/IdeaProjects/vm-benchmarking-client/src/main/resources"
+OUTPUT_DIR="../../../."
 USE_CASE="devops"
 SCALE=${SCALE:-"8"}
 LOG_INTERVAL=${LOG_INTERVAL:-"10"}
