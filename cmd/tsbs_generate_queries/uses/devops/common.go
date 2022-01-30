@@ -284,7 +284,7 @@ func GetMetrics(metric string) []string {
 	case "diskio":
 		return diskioMetrics
 	case "kernel":
-		return netMetrics
+		return kernelMetrics
 	case "mem":
 		return memMetrics
 	case "net":

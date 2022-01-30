@@ -7,7 +7,7 @@ import (
 )
 
 var (
-	labelPostgresql = []byte("postgresl") // heap optimization
+	labelPostgresql = []byte("postgresql") // heap optimization
 
 	// Reuse NormalDistributions as arguments to other distributions. This is
 	// safe to do because the higher-level distribution advances the ND and
