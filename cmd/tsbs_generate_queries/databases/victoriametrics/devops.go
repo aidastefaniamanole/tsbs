@@ -47,7 +47,15 @@ func (d *Devops) HighCPUForHosts(qi query.Query, nHosts int) {
 // 	)
 // ) by (__name__)
 func (d *Devops) GroupByTime(qq query.Query, nHosts, numMetrics int, timeRange time.Duration) {
-	hosts := d.mustGetRandomHosts(nHosts)
+	var hosts []string
+	if nHosts == -1 {
+		// generate all hosts
+		for i := 0; i < d.Core.Scale; i++ {
+			hosts = append(hosts, fmt.Sprintf("host_%d", i))
+		}
+	} else {
+		hosts = d.mustGetRandomHosts(nHosts)
+	}
 
 	metrics := mustGetCPUMetricsSlice(numMetrics)
 	selectClause := getSelectClause(metrics, hosts, "cpu")
@@ -61,7 +69,11 @@ func (d *Devops) GroupByTime(qq query.Query, nHosts, numMetrics int, timeRange t
 
 	queries := make([]string, len(d.Metrics))
 	for i := 0; i < len(d.Metrics); i++ {
-		metrics = mustGetMetricsSlice(numMetrics, devops.GetMetrics(d.Metrics[i]))
+		if numMetrics == devops.GetCPUMetricsLen() {
+			metrics = devops.GetMetrics(d.Metrics[i])
+		} else {
+			metrics = mustGetMetricsSlice(numMetrics, devops.GetMetrics(d.Metrics[i]))
+		}
 		selectClause = getSelectClause(metrics, hosts, d.Metrics[i])
 		queries[i] = fmt.Sprintf("max(max_over_time(%s[5m])) by (__name__)", selectClause)
 	}
