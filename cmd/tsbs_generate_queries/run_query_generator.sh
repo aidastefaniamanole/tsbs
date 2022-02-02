@@ -14,16 +14,16 @@ single-groupby-1-1-12 \
 single-groupby-1-8-1 \
 single-groupby-5-1-1 \
 single-groupby-5-1-12 \
-single-groupby-5-8-1"
+single-groupby-5-8-1 \
+single-groupby-all-all-5m"
 
-QUERY="single-groupby-5-8-1"
 QUERY_TYPES=${QUERY:-${QUERY_TYPES_ALL}}
 
 # Number of hosts to generate data about
 SCALE=${SCALE:-"8"}
 
 # Number of queries to generate
-QUERIES=${QUERIES:-"1000"}
+QUERIES=${QUERIES:-"4032"}
 
 TIMESTAMP_START="2022-01-18T19:48:41Z"
 TIMESTAMP_END="2022-01-20T19:48:41Z"
