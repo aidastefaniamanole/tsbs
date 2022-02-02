@@ -36,7 +36,7 @@ for QUERY_TYPE in ${QUERY_TYPES}; do
 Number of queries=${QUERIES}
 Timestamp start=${TIMESTAMP_START}
 Timestamp end=${TIMESTAMP_END}
-Queries span in days=${EXPERIMENT_DAYS}" >> "${OUTPUT_DIR}/${QUERY_TYPE}_${SCALE}_hosts.csv"
+Queries span in days=${EXPERIMENT_DAYS}" >> "${OUTPUT_DIR}/${QUERY_TYPE}.csv"
     echo "Generating ${QUERIES} of type ${QUERY_TYPE} for ${SCALE} hosts"
     echo 
     go run main.go --format "victoriametrics"  \
@@ -45,5 +45,5 @@ Queries span in days=${EXPERIMENT_DAYS}" >> "${OUTPUT_DIR}/${QUERY_TYPE}_${SCALE
         --timestamp-start ${TIMESTAMP_START} \
         --timestamp-end ${TIMESTAMP_END} \
         --queries ${QUERIES} \
-        --query-type ${QUERY_TYPE} >> "${OUTPUT_DIR}/${QUERY_TYPE}_${SCALE}_hosts.csv"
+        --query-type ${QUERY_TYPE} >> "${OUTPUT_DIR}/${QUERY_TYPE}.csv"
 done
